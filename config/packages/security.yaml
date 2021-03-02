@@ -1,15 +1,30 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    encoders:
+        App\Entity\Participant:
+            algorithm: auto
+    enable_authenticator_manager: true
     providers:
+        your_db_provider:
+            entity:
+                class: App\Entity\Participant
+                property: apiToken
         users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\Participant
+                property: mail
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            anonymous: true
-            lazy: true
-            provider: users_in_memory
+        #main:
+            #anonymous: true
+            #lazy: true
+            #provider: users_in_memory
+            #guard:
+                #authenticators:
+                    #- App\Security\TokenAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
