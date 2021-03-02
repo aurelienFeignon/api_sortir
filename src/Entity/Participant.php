@@ -6,6 +6,8 @@ use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -14,9 +16,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
  * @UniqueEntity("email")
  */
-class Participant
+class Participant implements UserInterface
 {
     /**
+     * @Groups("participant:read")
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -24,6 +27,7 @@ class Participant
     private $id;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -37,6 +41,7 @@ class Participant
     private $nom;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -50,11 +55,11 @@ class Participant
     private $prenom;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Email(message="ceci n'est pas un email")
      * @Assert\Type(type="string")
-     * @Assert\Unique(message="L'email doit etre unique")
      * @Assert\Length(
      *     min=3, max=150,
      *     minMessage="L'email doit faire plus de 3 caracteres",
@@ -62,9 +67,10 @@ class Participant
      * )
      * @ORM\Column(type="string", length=150)
      */
-    private $mail;
+    private $email;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -78,6 +84,7 @@ class Participant
     private $password;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="boolean")
@@ -86,6 +93,7 @@ class Participant
     private $administrateur;
 
     /**
+     * @Groups("participant:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="boolean")
@@ -94,17 +102,32 @@ class Participant
     private $actif;
 
     /**
+     * @Groups("participant:read")
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     */
+     private $apiToken;
+
+    /**
+     * @Groups("participant:read")
+     * @ORM\Column(type="json")
+     */
+     private $roles=[];
+
+    /**
+     * @Groups("participant:read")
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="participants")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(name="campus_id", referencedColumnName="id", nullable=false)
      */
     private $campus;
 
     /**
+     * @Groups("participant:read")
      * @ORM\ManyToMany(targetEntity=Sortie::class, mappedBy="participants")
      */
     private $sorties;
 
     /**
+     * @Groups("participant:read")
      * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="organisateur", orphanRemoval=true)
      */
     private $sortiesOrganisees;
@@ -113,6 +136,7 @@ class Participant
     {
         $this->sorties = new ArrayCollection();
         $this->sortiesOrganisees = new ArrayCollection();
+        $this->roles[]='ROLE_USER';
     }
 
     public function getId(): ?int
@@ -144,17 +168,23 @@ class Participant
         return $this;
     }
 
-    public function getMail(): ?string
+    /**
+     * @return mixed
+     */
+    public function getEmail()
     {
-        return $this->mail;
+        return $this->email;
     }
 
-    public function setMail(string $mail): self
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email): void
     {
-        $this->mail = $mail;
-
-        return $this;
+        $this->email = $email;
     }
+
+
 
     public function getPassword(): ?string
     {
@@ -259,5 +289,57 @@ class Participant
         }
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApiToken()
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * @param mixed $apiToken
+     */
+    public function setApiToken($apiToken): void
+    {
+        $this->apiToken = $apiToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoles():array
+    {
+        $roles=$this->roles;
+        $roles[]= 'ROLE_USER';
+        return array_unique($roles);
+    }
+
+    /**
+     * @param mixed $roles
+     */
+    public function addRoles($rolesAdd): void
+    {
+        $this->roles[]=$rolesAdd;
+    }
+
+
+
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        // TODO: Implement getUsername() method.
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }
