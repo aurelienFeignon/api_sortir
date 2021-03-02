@@ -2,23 +2,40 @@
 
 namespace App\Controller;
 
+use App\Entity\Ville;
 use App\Repository\VilleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VilleController extends AbstractController
 {
     /**
      * @Route("/api/villes", name="ville", methods={"GET"})
      */
-    public function getVille(VilleRepository $villeRepository, SerializerInterface $serializer): Response
+    public function getVille(VilleRepository $villeRepository): Response
     {
 
-        //$json= $serializer->serialize($villeRepository->findAll(),'json');
-        //return new JsonResponse($json,200,[],true);
         return $this->json($villeRepository->findAll(),200, []);
+    }
+
+    /**
+     * @Route("/api/villes", name="ville", methods={"POST"})
+     */
+    public function addVille(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, SerializerInterface $serializer){
+        $jsonRecu= $request->getContent();
+        $ville= $serializer->deserialize($jsonRecu, Ville::class, 'json');
+        $error= $validator->validate($ville);
+        if(count($error)>0){
+            return $this->json($error,400);
+        }else{
+            $em->persist($ville);
+            $em->flush();
+            return $this->json($ville, 201);
+        }
     }
 }
