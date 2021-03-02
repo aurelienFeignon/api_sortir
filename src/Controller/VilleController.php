@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class VilleController extends AbstractController
 {
     /**
-     * @Route("/api/villes", name="ville", methods={"GET"})
+     * @Route("/api/villes", name="getville", methods={"GET"})
      */
     public function getVille(VilleRepository $villeRepository): Response
     {
@@ -24,7 +24,7 @@ class VilleController extends AbstractController
     }
 
     /**
-     * @Route("/api/villes", name="ville", methods={"POST"})
+     * @Route("/api/villes", name="postville", methods={"POST"})
      */
     public function addVille(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, SerializerInterface $serializer){
         $jsonRecu= $request->getContent();
