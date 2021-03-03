@@ -16,7 +16,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
  * @UniqueEntity(
  *     fields={"email", "username", "apiToken"},
- *     errorPath="email",
  *     message="l'email existe deja",
  *     errorPath="username",
  *     message="Le pseudo existe deja")
@@ -24,7 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Participant implements UserInterface
 {
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")

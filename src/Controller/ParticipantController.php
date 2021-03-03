@@ -22,7 +22,8 @@ class ParticipantController extends AbstractController
      */
     public function addParticipant(Request $request, EntityManagerInterface $em, ValidatorInterface $validator,
                                    SerializerInterface $serializer, UserPasswordEncoderInterface $passwordEncoder,
-                                   GenerateToken $generateToken, CampusRepository $campusRepository): Response
+                                   GenerateToken $generateToken, CampusRepository $campusRepository,
+                                   ParticipantRepository $participantRepository): Response
     {
         $jsonRecu= $request->getContent();
         $participant= $serializer->deserialize($jsonRecu, Participant::class, 'json');
@@ -31,6 +32,14 @@ class ParticipantController extends AbstractController
         $participant->setCampus($campus);
         $participant= $generateToken->getToken($participant);
         $error= $validator->validate($participant);
+        $emailExistant=$participantRepository->findOneBy(['email'=>$participant->getEmail()]);
+        if(!empty($emailExistant)){
+            return $this->json(["error"=>"l'email existe deja"]);
+        }
+        $userExistant=$participantRepository->findOneBy(['username'=>$participant->getUsername()]);
+        if(!empty($userExistant)>0){
+            return $this->json(["error"=>"l'username existe deja"]);
+        }
         if(count($error)>0){
             return $this->json($error,400);
         }else{
@@ -73,7 +82,8 @@ class ParticipantController extends AbstractController
     {
         $jsonRecu= $request->getContent();
         $participantUpdate= $serializer->deserialize($jsonRecu, Participant::class, 'json');
-        $participant= $participantRepository->findOneBy(['id'=>$participantUpdate->getId()]);
+        $id= json_decode($jsonRecu)->id;
+        $participant= $participantRepository->findOneBy(['id'=>$id]);
         if(empty($participant)){
             return $this->json(["error"=>"l'utilisateur n'existe pas"],404);
         }
@@ -99,6 +109,10 @@ class ParticipantController extends AbstractController
             if(count($error)>0){
                 return $this->json($error, 400);
             }
+            $emailExistant=$participantRepository->findOneBy(['email'=>$participantUpdate->getEmail()]);
+            if(!empty($emailExistant)){
+                return $this->json(["error"=>"l'email existe deja"]);
+            }
             $participant->setEmail($participantUpdate->getEmail());
         }
         if($participant->getUsername()!==$participantUpdate->getUsername())
@@ -107,23 +121,46 @@ class ParticipantController extends AbstractController
             if(count($error)>0){
                 return $this->json($error, 400);
             }
+            $userExistant=$participantRepository->findOneBy(['username'=>$participantUpdate->getUsername()]);
+            if(!empty($userExistant)>0){
+                return $this->json(["error"=>"l'username existe deja"]);
+            }
             $participant->setUsername($participantUpdate->geUsername());
         }
         //verifie si le champs password
-        if(empty($participantUpdate->getPassword())||!password_verify($participantUpdate->getPassword(), $participant->getPassword()))
+        //dd(!empty($participantUpdate->getPassword()));
+        if(!empty($participantUpdate->getPassword()))
         {
-            $error=$validator->validateProperty($participantUpdate,'password');
+            if(!password_verify($participantUpdate->getPassword(), $participant->getPassword()))
+            {
+                $error=$validator->validateProperty($participantUpdate,'password');
+                if(count($error)>0){
+                    return $this->json($error, 400);
+                }
+                $participant->setPassword($passwordEncoder->encodePassword($participant, $participantUpdate->getPassword()));
+            }
+        }
+        if($participant->getTelephone()!==$participantUpdate->getTelephone())
+        {
+            $error=$validator->validateProperty($participantUpdate,'telephone');
             if(count($error)>0){
                 return $this->json($error, 400);
             }
-            $participant->setPassword($passwordEncoder->encodePassword($participant, $participantUpdate->getPassword()));
+            $participant->setTelephone($participantUpdate->getTelephone());
         }
-        dd($participant);
+        if($participant->getCheminImg()!==$participantUpdate->getCheminImg())
+        {
+            $error=$validator->validateProperty($participantUpdate,'cheminImg');
+            if(count($error)>0){
+                return $this->json($error, 400);
+            }
+            $participant->setCheminImg($participantUpdate->getCheminImg());
+        }
+        $em->flush();
+        return $this->json($participant,201, [],['groups'=>'participantUser:read']);
     }
+
+
 }
-/**
- * let administrateur: boolean= false
- * if(form.value.administrateur==="true"){
- * adminstrateur=true;
- * }
- */
+
+
