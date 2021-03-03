@@ -60,10 +60,12 @@ class Participant implements UserInterface
     private $prenom;
 
     /**
+     * @Assert\NotBlank
+     * @Assert\NotNull
      * @Assert\Length(max="50",
      *     maxMessage="Le pseudo ne peut pas faire plus de 15 caractères")
      * @Groups({"participant:read", "participantUser:read"})
-     * @ORM\Column(type="string", length=50, nullable=true)
+     * @ORM\Column(type="string", unique=true, length=50)
      */
     private $username;
 
@@ -78,7 +80,7 @@ class Participant implements UserInterface
      *     minMessage="L'email doit faire plus de 3 caracteres",
      *     maxMessage="L'email doit faire moins de 150 caracteres"
      * )
-     * @ORM\Column(type="string", length=150)
+     * @ORM\Column(type="string", unique=true, length=150)
      */
     private $email;
 
@@ -134,7 +136,7 @@ class Participant implements UserInterface
 
     /**
      * @Groups({"participant:read", "participantUser:read"})
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
      private $apiToken;
 
