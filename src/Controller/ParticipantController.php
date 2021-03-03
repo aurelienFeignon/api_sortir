@@ -109,15 +109,21 @@ class ParticipantController extends AbstractController
             }
             $participant->setUsername($participantUpdate->geUsername());
         }
-        //todo
-        if(!password_verify($password, $participant->getPassword()))
+        //verifie si le champs password
+        if(empty($participantUpdate->getPassword())||!password_verify($participantUpdate->getPassword(), $participant->getPassword()))
         {
-            $error=$validator->validateProperty($participantUpdate,'username');
+            $error=$validator->validateProperty($participantUpdate,'password');
             if(count($error)>0){
                 return $this->json($error, 400);
             }
-            $participant->setUsername($participantUpdate->geUsername());
+            $participant->setPassword($passwordEncoder->encodePassword($participant, $participantUpdate->getPassword()));
         }
         dd($participant);
     }
 }
+/**
+ * let administrateur: boolean= false
+ * if(form.value.administrateur==="true"){
+ * adminstrateur=true;
+ * }
+ */

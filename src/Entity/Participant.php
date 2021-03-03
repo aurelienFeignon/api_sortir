@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
  * @UniqueEntity(
- *     fields={"email", "username"},
+ *     fields={"email", "username", "apiToken"},
  *     errorPath="email",
  *     message="l'email existe deja",
  *     errorPath="username",
@@ -118,8 +118,6 @@ class Participant implements UserInterface
 
     /**
      * @Groups({"participant:read", "participantUser:read"})
-     * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Type(type="boolean")
      * @ORM\Column(type="boolean")
      */
@@ -127,8 +125,6 @@ class Participant implements UserInterface
 
     /**
      * @Groups({"participant:read", "participantUser:read"})
-     * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Type(type="boolean")
      * @ORM\Column(type="boolean")
      */
