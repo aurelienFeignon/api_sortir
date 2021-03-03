@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Campus
 {
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "campusProduit:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -23,7 +23,7 @@ class Campus
     private $id;
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "campusProduit:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -42,6 +42,7 @@ class Campus
     private $participants;
 
     /**
+     * @Groups({"campusProduit:read"})
      * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="campus", orphanRemoval=true,cascade={"persist"})
      */
     private $sorties;

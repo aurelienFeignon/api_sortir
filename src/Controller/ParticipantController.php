@@ -64,4 +64,29 @@ class ParticipantController extends AbstractController
             return $this->json($participant,200,[], ['groups'=>'participantUser:read']);
         }
     }
+    /**
+     * @Route("/api/update/participant", name="updateParticipant", methods={"PUT"})
+     */
+    public function update(Request $request, EntityManagerInterface $em, ValidatorInterface $validator,
+                           SerializerInterface $serializer, UserPasswordEncoderInterface $passwordEncoder,
+                           CampusRepository $campusRepository)
+    {
+        $jsonRecu= $request->getContent();
+        $participant= $serializer->deserialize($jsonRecu, Participant::class, 'json');
+        $id_campus=json_decode($jsonRecu)->campus->id;
+        $campus= $campusRepository->find($id_campus);
+        $participant->setCampus($campus);
+        $error= $validator->validate($participant);
+        if(count($error)>0){
+            return $this->json($error,400);
+        }else{
+            $participant->setPassword($passwordEncoder->encodePassword($participant, $participant->getPassword()));
+            if($participant->getAdministrateur()){
+                $participant->addRoles('ROLE_ADMIN');
+            }
+            $em->persist($participant);
+            $em->flush();
+            return $this->json($participant, 201, [], ['groups'=>'participant:read']);
+        }
+    }
 }

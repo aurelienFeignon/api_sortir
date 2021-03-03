@@ -19,7 +19,7 @@ class CampusController extends AbstractController
      */
     public function getCampus(CampusRepository $campusRepository): Response
     {
-        return $this->json($campusRepository->findAll(),200, []);
+        return $this->json($campusRepository->findAll(),200, [], ['groups'=>'campusProduit:read']);
     }
 
     /**

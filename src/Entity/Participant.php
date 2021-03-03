@@ -14,7 +14,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
- * @UniqueEntity("email",message="l'email existe deja")
+ * @UniqueEntity(
+ *     fields={"email", "username"},
+ *     errorPath="email",
+ *     message="l'email existe deja",
+ *     errorPath="username",
+ *     message="Le pseudo existe deja")
  */
 class Participant implements UserInterface
 {
@@ -55,6 +60,14 @@ class Participant implements UserInterface
     private $prenom;
 
     /**
+     * @Assert\Length(max="50",
+     *     maxMessage="Le pseudo ne peut pas faire plus de 15 caractères")
+     * @Groups({"participant:read", "participantUser:read"})
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $username;
+
+    /**
      * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
@@ -82,6 +95,24 @@ class Participant implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $password;
+
+    /**
+     * @Groups({"participant:read", "participantUser:read"})
+     * @Assert\Length(max="15",
+     *     maxMessage="Le numero de telephone ne peut pas faire plus de 15 caractères")
+     * @ORM\Column(type="string", length=15, nullable=true)
+     */
+    private $telephone;
+
+
+
+    /**
+     * @Groups({"participant:read", "participantUser:read"})
+     * @Assert\Length(max="255",
+     *     maxMessage="Le chemin de l'image ne peut pas faire plus de 255 caractères")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cheminImg;
 
     /**
      * @Groups({"participant:read", "participantUser:read"})
@@ -131,6 +162,7 @@ class Participant implements UserInterface
      * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="organisateur", orphanRemoval=true)
      */
     private $sortiesOrganisees;
+
 
     public function __construct()
     {
@@ -333,13 +365,49 @@ class Participant implements UserInterface
         // TODO: Implement getSalt() method.
     }
 
+    /**
+     * @return mixed
+     */
     public function getUsername()
     {
-        // TODO: Implement getUsername() method.
+        return $this->username;
     }
+
+
 
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getCheminImg(): ?string
+    {
+        return $this->cheminImg;
+    }
+
+    public function setCheminImg(?string $cheminImg): self
+    {
+        $this->cheminImg = $cheminImg;
+
+        return $this;
     }
 }
