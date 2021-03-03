@@ -26,7 +26,7 @@ class ParticipantController extends AbstractController
     {
         $jsonRecu= $request->getContent();
         $participant= $serializer->deserialize($jsonRecu, Participant::class, 'json');
-        $id_campus=json_decode($jsonRecu)->campus->id;
+        $id_campus=json_decode($jsonRecu)->campus;
         $campus= $campusRepository->find($id_campus);
         $participant->setCampus($campus);
         $participant= $generateToken->getToken($participant);
@@ -69,24 +69,55 @@ class ParticipantController extends AbstractController
      */
     public function update(Request $request, EntityManagerInterface $em, ValidatorInterface $validator,
                            SerializerInterface $serializer, UserPasswordEncoderInterface $passwordEncoder,
-                           CampusRepository $campusRepository)
+                           ParticipantRepository $participantRepository)
     {
         $jsonRecu= $request->getContent();
-        $participant= $serializer->deserialize($jsonRecu, Participant::class, 'json');
-        $id_campus=json_decode($jsonRecu)->campus->id;
-        $campus= $campusRepository->find($id_campus);
-        $participant->setCampus($campus);
-        $error= $validator->validate($participant);
-        if(count($error)>0){
-            return $this->json($error,400);
-        }else{
-            $participant->setPassword($passwordEncoder->encodePassword($participant, $participant->getPassword()));
-            if($participant->getAdministrateur()){
-                $participant->addRoles('ROLE_ADMIN');
-            }
-            $em->persist($participant);
-            $em->flush();
-            return $this->json($participant, 201, [], ['groups'=>'participant:read']);
+        $participantUpdate= $serializer->deserialize($jsonRecu, Participant::class, 'json');
+        $participant= $participantRepository->findOneBy(['id'=>$participantUpdate->getId()]);
+        if(empty($participant)){
+            return $this->json(["error"=>"l'utilisateur n'existe pas"],404);
         }
+        if($participant->getNom()!==$participantUpdate->getNom())
+        {
+            $error=$validator->validateProperty($participantUpdate,'nom');
+            if(count($error)>0){
+                return $this->json($error, 400);
+            }
+            $participant->setNom($participantUpdate->getNom());
+        }
+        if($participant->getPrenom()!==$participantUpdate->getPrenom())
+            {
+                $error=$validator->validateProperty($participantUpdate,'prenom');
+                if(count($error)>0){
+                    return $this->json($error, 400);
+                }
+                $participant->setPrenom($participantUpdate->getPrenom());
+            }
+        if($participant->getEmail()!==$participantUpdate->getEmail())
+        {
+            $error=$validator->validateProperty($participantUpdate,'email');
+            if(count($error)>0){
+                return $this->json($error, 400);
+            }
+            $participant->setEmail($participantUpdate->getEmail());
+        }
+        if($participant->getUsername()!==$participantUpdate->getUsername())
+        {
+            $error=$validator->validateProperty($participantUpdate,'username');
+            if(count($error)>0){
+                return $this->json($error, 400);
+            }
+            $participant->setUsername($participantUpdate->geUsername());
+        }
+        //todo
+        if(!password_verify($password, $participant->getPassword()))
+        {
+            $error=$validator->validateProperty($participantUpdate,'username');
+            if(count($error)>0){
+                return $this->json($error, 400);
+            }
+            $participant->setUsername($participantUpdate->geUsername());
+        }
+        dd($participant);
     }
 }
