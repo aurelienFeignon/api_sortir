@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Service\GenerateToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,6 +41,27 @@ class ParticipantController extends AbstractController
             $em->persist($participant);
             $em->flush();
             return $this->json($participant, 201, [], ['groups'=>'participant:read']);
+        }
+    }
+
+    /**
+     * @Route("/api/login/participant", name="loginParticipant", methods={"POST"})
+     */
+    public function seConnecter(Request $request, ParticipantRepository $participantRepository)
+    {
+        $jsonRecu= $request->getContent();
+        $email= json_decode($jsonRecu)->email;
+        $password= json_decode($jsonRecu)->password;
+        $participant = $participantRepository->findOneBy(['email'=>$email]);
+        if(empty($participant))
+        {
+            return $this->json(['error'=>'Email inconnu'], 404);
+        }
+        elseif (!password_verify($password, $participant->getPassword())){
+        return $this->json(['error'=>'Le mot de passe est incorrect'],403);
+        }
+        else{
+            return $this->json($participant,200,[], ['groups'=>'participantUser:read']);
         }
     }
 }

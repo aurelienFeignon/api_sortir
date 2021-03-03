@@ -14,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
- * @UniqueEntity("email")
+ * @UniqueEntity("email",message="l'email existe deja")
  */
 class Participant implements UserInterface
 {
@@ -27,7 +27,7 @@ class Participant implements UserInterface
     private $id;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -41,7 +41,7 @@ class Participant implements UserInterface
     private $nom;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -55,7 +55,7 @@ class Participant implements UserInterface
     private $prenom;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Email(message="ceci n'est pas un email")
@@ -84,7 +84,7 @@ class Participant implements UserInterface
     private $password;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="boolean")
@@ -93,7 +93,7 @@ class Participant implements UserInterface
     private $administrateur;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="boolean")
@@ -102,7 +102,7 @@ class Participant implements UserInterface
     private $actif;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @ORM\Column(type="string", unique=true, nullable=true)
      */
      private $apiToken;
@@ -114,20 +114,20 @@ class Participant implements UserInterface
      private $roles=[];
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="participants")
      * @ORM\JoinColumn(name="campus_id", referencedColumnName="id", nullable=false)
      */
     private $campus;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @ORM\ManyToMany(targetEntity=Sortie::class, mappedBy="participants")
      */
     private $sorties;
 
     /**
-     * @Groups("participant:read")
+     * @Groups({"participant:read", "participantUser:read"})
      * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="organisateur", orphanRemoval=true)
      */
     private $sortiesOrganisees;
