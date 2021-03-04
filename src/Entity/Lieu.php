@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Lieu
 {
     /**
+     * @Groups("sortie:read")
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -22,7 +23,7 @@ class Lieu
     private $id;
 
     /**
-     * @Groups("ville:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -36,7 +37,7 @@ class Lieu
     private $nom;
 
     /**
-     * @Groups("ville:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -50,17 +51,17 @@ class Lieu
     private $rue;
 
     /**
-     * @Groups("ville:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="float")
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $latitude;
 
     /**
-     * @Groups("ville:read")
-     * @ORM\Column(type="float")
+     * @Groups({"ville:read", "sortie:read"})
+     * @ORM\Column(type="float", nullable=true)
      */
     private $longitude;
 
@@ -70,15 +71,26 @@ class Lieu
     private $sortie;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="lieux")
      * @ORM\JoinColumn(nullable=false)
      */
     private $ville;
 
 
-
-    public function __construct()
+    /**
+     * Lieu constructor.
+     * @param $nom
+     * @param $rue
+     * @param $latitude
+     * @param $longitude
+     */
+    public function __construct($nom, $rue, $latitude, $longitude)
     {
+        $this->nom = $nom;
+        $this->rue = $rue;
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
         $this->sortie = new ArrayCollection();
     }
 

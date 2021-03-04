@@ -6,6 +6,7 @@ use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Etat
 {
     /**
+     * @Groups("sortie:read")
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -21,11 +23,12 @@ class Etat
     private $id;
 
     /**
+     * @Groups("sortie:read")
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
      * @Assert\Choice(
-     *     choices= {"Créée", "Cloturée"},
+     *     choices= {"Créée", "Cloturée", "Publié"},
      *     message="Le libéllé doit etre Créée ou Cloturée"
      * )
      * @Assert\Length(

@@ -24,7 +24,7 @@ class Ville
     private $id;
 
     /**
-     * @Groups("ville:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -38,7 +38,7 @@ class Ville
     private $nom;
 
     /**
-     * @Groups("ville:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @ORM\Column(type="string", length=10)
      */
     private $codePostal;

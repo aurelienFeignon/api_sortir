@@ -6,6 +6,7 @@ use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Sortie
 {
     /**
+     * @Groups({"sortie:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -21,6 +23,7 @@ class Sortie
     private $id;
 
     /**
+     * @Groups({"sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -34,6 +37,7 @@ class Sortie
     private $nom;
 
     /**
+     * @Groups({"sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\DateTime
@@ -42,6 +46,7 @@ class Sortie
     private $dateHeureDebut;
 
     /**
+     * @Groups({"sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="integer")
@@ -51,6 +56,7 @@ class Sortie
     private $duree;
 
     /**
+     * @Groups({"sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="integer")
@@ -60,6 +66,7 @@ class Sortie
     private $nbInscriptionMax;
 
     /**
+     * @Groups({"sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -73,34 +80,40 @@ class Sortie
     private $infosSortie;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToMany(targetEntity=Participant::class, inversedBy="sorties")
      */
     private $participants;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToOne(targetEntity=Participant::class, inversedBy="sortiesOrganisees")
      * @ORM\JoinColumn(nullable=false)
      */
     private $organisateur;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToOne(targetEntity=Etat::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $etat;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\Column(type="date")
      */
     private $dateLimiteInscritions;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $campus;
 
     /**
+     * @Groups({"sortie:read"})
      * @ORM\ManyToOne(targetEntity=Lieu::class, inversedBy="sortie")
      * @ORM\JoinColumn(nullable=false)
      */

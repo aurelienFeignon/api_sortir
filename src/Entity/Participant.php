@@ -23,7 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Participant implements UserInterface
 {
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -31,7 +31,7 @@ class Participant implements UserInterface
     private $id;
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -45,7 +45,7 @@ class Participant implements UserInterface
     private $nom;
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -63,13 +63,13 @@ class Participant implements UserInterface
      * @Assert\NotNull
      * @Assert\Length(max="50",
      *     maxMessage="Le pseudo ne peut pas faire plus de 15 caractères")
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @ORM\Column(type="string", unique=true, length=50)
      */
     private $username;
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Email(message="ceci n'est pas un email")
@@ -98,7 +98,7 @@ class Participant implements UserInterface
     private $password;
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @Assert\Length(max="15",
      *     maxMessage="Le numero de telephone ne peut pas faire plus de 15 caractères")
      * @ORM\Column(type="string", length=15, nullable=true)
@@ -108,7 +108,7 @@ class Participant implements UserInterface
 
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @Assert\Length(max="255",
      *     maxMessage="Le chemin de l'image ne peut pas faire plus de 255 caractères")
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -142,7 +142,7 @@ class Participant implements UserInterface
      private $roles=[];
 
     /**
-     * @Groups({"participant:read", "participantUser:read"})
+     * @Groups({"participant:read", "participantUser:read", "sortie:read"})
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="participants")
      * @ORM\JoinColumn(name="campus_id", referencedColumnName="id", nullable=false)
      */
