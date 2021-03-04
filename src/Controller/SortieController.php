@@ -45,7 +45,6 @@ class SortieController extends AbstractController
         }
         $idCampus= json_decode($jsonRecu)->idCampus;
         $campus= $campusRepository->find($idCampus);
-        dd($campus);
         if(is_null($campus)){
             return $this->json(['error'=>"Le campus n'existe pas"],400);
         }

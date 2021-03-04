@@ -20,7 +20,7 @@ class VilleController extends AbstractController
     public function getVille(VilleRepository $villeRepository): Response
     {
 
-        return $this->json($villeRepository->findAll(),200, []);
+        return $this->json($villeRepository->findAll(),200, [], ['groups'=>'ville:read']);
     }
 
     /**
@@ -35,7 +35,7 @@ class VilleController extends AbstractController
         }else{
             $em->persist($ville);
             $em->flush();
-            return $this->json($ville, 201);
+            return $this->json($ville, 201,[],['groups'=>'"ville:read"']);
         }
     }
 }
