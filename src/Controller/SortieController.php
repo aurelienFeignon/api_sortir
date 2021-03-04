@@ -38,29 +38,31 @@ class SortieController extends AbstractController
     {
         $jsonRecu= $request->getContent();
         $sortie= $serializer->deserialize($jsonRecu, Sortie::class, 'json');
-        $idOrganisateur= json_decode($jsonRecu)->organisateur;
+        $idOrganisateur= json_decode($jsonRecu)->idOrganisateur;
         $organisateur= $participantRepository->find($idOrganisateur);
         if(is_null($organisateur)){
             return $this->json(['error'=>"L'organisateur n'existe pas"],400);
         }
-        $idCampus= json_decode($jsonRecu)->idcampus;
+        $idCampus= json_decode($jsonRecu)->idCampus;
         $campus= $campusRepository->find($idCampus);
+        dd($campus);
         if(is_null($campus)){
             return $this->json(['error'=>"Le campus n'existe pas"],400);
         }
-        $idVille= json_decode($jsonRecu)->idville;
+        $idVille= json_decode($jsonRecu)->idVille;
         $ville= $villeRepository->find($idVille);
         if(is_null($ville)){
             return $this->json(['error'=>"La ville n'existe pas"],400);
         }
-        $idLieu= json_decode($jsonRecu)->idLieu;
-        $lieu= $lieuRepository->find($idLieu);
-        if(is_null($lieu)){
+        if(isset(json_decode($jsonRecu)->idLieu)) {
+            $idLieu = json_decode($jsonRecu)->idLieu;
+            $lieu = $lieuRepository->find($idLieu);
+        }else{
             $nomLieu=json_decode($jsonRecu)->nomLieu;
             $rueLieu=json_decode($jsonRecu)->rueLieu;
             $latitudeLieu=json_decode($jsonRecu)->latitudeLieu;
             $longitudeLieu=json_decode($jsonRecu)->longitudeLieu;
-            if(is_null($nomLieu)||is_null($rueLieu)||is_null($latitudeLieu)||is_null($longitudeLieu)){
+            if(is_null($nomLieu)||is_null($rueLieu)){
                 return $this->json(["error"=>"Les champs de lieux ne sont pas tous saisie"], 400);
             }
             $lieu= new Lieu($nomLieu,$rueLieu,$latitudeLieu,$longitudeLieu);
@@ -75,7 +77,7 @@ class SortieController extends AbstractController
         $sortie->setCampus($campus);
         $sortie->setOrganisateur($organisateur);
         $error= $validator->validate($sortie);
-        if(count($error)>0){
+        if(!is_null($error)>0){
             return $this->json($error,400);
         }
         $entityManager->persist($sortie);

@@ -38,9 +38,6 @@ class Sortie
 
     /**
      * @Groups({"sortie:read"})
-     * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      */
     private $dateHeureDebut;
