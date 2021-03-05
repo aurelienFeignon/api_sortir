@@ -157,6 +157,15 @@ class SortieController extends AbstractController
         return $this->json($sortieRepository->findAll(),201,[],['groups'=>'sortie:read']);
     }
 
+    /**
+     * @Route("/api/sortie/consulter", name="consulterSortie", methods={"POST"})
+     */
+     public function consulterSortie(Request $request, SortieRepository $sortieRepository){
+         $jsonRecu= $request->getContent();
+            $idSortie= json_decode($jsonRecu)->idSortie;
+        return $this->json($sortieRepository->find($idSortie),200,[], ['groups'=>'sortie:read']);
+     }
+
     private function majBDD(array $sorties)
     {
         $em= $this->getDoctrine()->getManager();
