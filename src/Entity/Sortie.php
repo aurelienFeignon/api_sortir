@@ -6,6 +6,7 @@ use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -268,5 +269,27 @@ class Sortie
         $this->lieu = $lieu;
 
         return $this;
+    }
+
+    public function verifLimiteMax(Sortie $sortie): bool
+    {
+        if(count($sortie->getParticipants())>=$sortie->getNbInscriptionMax()){
+            return false;
+        }
+        return true;
+    }
+
+    public function verifParticipantInscrit(Sortie $sortie, Participant $participant): bool
+    {
+        $retour= false;
+        foreach ($sortie->getParticipants() as $participantCourant)
+        {
+            if($participant->getId()===$participantCourant->getId()){
+                $retour=true;
+                break;
+            }
+        }
+
+        return $retour;
     }
 }

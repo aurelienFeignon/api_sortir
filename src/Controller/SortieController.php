@@ -83,4 +83,53 @@ class SortieController extends AbstractController
         $entityManager->flush();
         return $this->json($sortie,201, [], ['groups'=>'sortie:read']);
     }
+
+   /**
+    * @Route("/api/sortie/inscription", name="inscriptionSortie", methods={"PUT"})
+    */
+    public function inscriptionSortie(  EntityManagerInterface $em, ParticipantRepository $participantRepository,
+                                        SortieRepository $sortieRepository, Request $request): Response
+    {
+        $jsonRecu= $request->getContent();
+        $idParticipant= json_decode($jsonRecu)->idParticipant;
+        $participant= $participantRepository->find($idParticipant);
+        if(is_null($participant)){
+            return $this->json(["error"=>"Le participant n'existe pas"],400);
+        }
+        $idSortie= json_decode($jsonRecu)->idSortie;
+        $sortie= $sortieRepository->find($idSortie);
+        if(is_null($sortie)){
+            return $this->json(["error"=>"La sortie n'existe pas"],400);
+        }
+        if(!$sortie->verifLimiteMax($sortie)){
+            return $this->json(["error"=>"Le nombre de participant est depassé"], 400);
+        }
+        $sortie->addParticipant($participant);
+        $em->flush();
+        return $this->json($sortieRepository->findAll(),201,[],['groups'=>'sortie:read']);
+    }
+    /**
+     * @Route("/api/sortie/deinscription", name="deinscriptionSortie", methods={"PUT"})
+     */
+    public function deinscriptionSortie(  EntityManagerInterface $em, ParticipantRepository $participantRepository,
+                                        SortieRepository $sortieRepository, Request $request): Response
+    {
+        $jsonRecu= $request->getContent();
+        $idParticipant= json_decode($jsonRecu)->idParticipant;
+        $participant= $participantRepository->find($idParticipant);
+        if(is_null($participant)){
+            return $this->json(["error"=>"Le participant n'existe pas"],400);
+        }
+        $idSortie= json_decode($jsonRecu)->idSortie;
+        $sortie= $sortieRepository->find($idSortie);
+        if(is_null($sortie)){
+            return $this->json(["error"=>"La sortie n'existe pas"],400);
+        }
+        if(!$sortie->verifParticipantInscrit($sortie, $participant)){
+            return $this->json(["error"=>"Le participant n'est pas inscrit"], 400);
+        }
+        $sortie->removeParticipant($participant);
+        $em->flush();
+        return $this->json($sortieRepository->findAll(),201,[],['groups'=>'sortie:read']);
+    }
 }

@@ -23,7 +23,7 @@ class Campus
     private $id;
 
     /**
-     * @Groups({"participant:read", "participantUser:read", "campusProduit:read", "sortie:read"})
+     * @Groups({"participant:read", "participantUser:read", "campusProduit:read", "sortie:read", "participantConsulte:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")

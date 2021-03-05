@@ -160,7 +160,15 @@ class ParticipantController extends AbstractController
         return $this->json($participant,201, [],['groups'=>'participantUser:read']);
     }
 
-
+    /**
+     * @Route("api/participant/consulter", name="consulterProfil", methods={"GET"})
+     */
+    public function consulterProfil(Request $request, ParticipantRepository $participantRepository)
+    {
+        $jsonRecu= $request->getContent();
+        $idParticipant= json_decode($jsonRecu)->idParticipant;
+        return $this->json($participantRepository->find($idParticipant),200,[],['groups'=>'participantConsulte:read']);
+    }
 }
 
 
