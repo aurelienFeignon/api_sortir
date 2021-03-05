@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Lieu
 {
     /**
-     * @Groups("sortie:read")
+     * @Groups({"ville:read", "sortie:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
