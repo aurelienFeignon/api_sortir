@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use ApiPlatform\Core\Validator\ValidatorInterface;
+use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Repository\CampusRepository;
@@ -18,13 +19,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+
 class SortieController extends AbstractController
 {
+
     /**
      * @Route("/api/sortie", name="getSortie", methods={"GET"})
      */
     public function getSortie(SortieRepository $sortieRepository): Response
     {
+        $sorties= $sortieRepository->findAll();
+        $this->majBDD($sorties);
        return $this->json($sortieRepository->findAll(),200, [], ['groups'=>'sortie:read']);
     }
 
@@ -131,5 +136,43 @@ class SortieController extends AbstractController
         $sortie->removeParticipant($participant);
         $em->flush();
         return $this->json($sortieRepository->findAll(),201,[],['groups'=>'sortie:read']);
+    }
+
+    /**
+     * @Route("/api/sortie/annuler", name="annulerSortie", methods={"PUT"})
+     */
+    public function annulerSortie(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, SortieRepository $sortieRepository)
+    {
+        $jsonRecu= $request->getContent();
+        $idSortie= json_decode($jsonRecu)->id;
+        $sortie= $sortieRepository->find($idSortie);
+        if(is_null($sortie)){
+            return $this->json(['error'=>"La sortie n'existe pas"], 400);
+        }
+        $motif= json_decode($jsonRecu)->motif;
+        $etat= $etatRepository->find(2);
+        $sortie->setEtat($etat);
+        $sortie->setMotif($motif);
+        $em->flush();
+        return $this->json($sortieRepository->findAll(),201,[],['groups'=>'sortie:read']);
+    }
+
+    private function majBDD(array $sorties)
+    {
+        $em= $this->getDoctrine()->getManager();
+        foreach ($sorties as $sortie){
+            $now= new \DateTime();
+            if($sortie->getDateHeureDebut()->add(new \DateInterval('PT'.$sortie->getDuree().'M'))>$now){
+            $repo= $this->getDoctrine()->getRepository(Etat::class);
+            $etat= $repo->find(2);
+            $sortie->setEtat($etat);
+            $em->flush();
+            }
+            if($sortie->getDateHeureDebut()->add(new \DateInterval('P1M'))<$now)
+            {
+                $em->remove($sortie);
+                $em->flush();
+            }
+        }
     }
 }
