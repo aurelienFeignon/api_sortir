@@ -100,7 +100,7 @@ class Sortie
      * @Groups({"sortie:read"})
      * @ORM\Column(type="date")
      */
-    private $dateLimiteInscritions;
+    private $dateLimiteInscriptions;
 
     /**
      * @Groups({"sortie:read"})
@@ -234,14 +234,14 @@ class Sortie
         return $this;
     }
 
-    public function getDateLimiteInscritions(): ?\DateTimeInterface
+    public function getDateLimiteInscriptions(): ?\DateTimeInterface
     {
-        return $this->dateLimiteInscritions;
+        return $this->dateLimiteInscriptions;
     }
 
-    public function setDateLimiteInscritions(\DateTimeInterface $dateLimiteInscritions): self
+    public function setDateLimiteInscriptions(\DateTimeInterface $dateLimiteInscritions): self
     {
-        $this->dateLimiteInscritions = $dateLimiteInscritions;
+        $this->dateLimiteInscriptions = $dateLimiteInscritions;
 
         return $this;
     }
