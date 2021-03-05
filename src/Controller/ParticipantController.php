@@ -161,7 +161,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("api/participant/consulter", name="consulterProfil", methods={"GET"})
+     * @Route("api/participant/consulter", name="consulterProfil", methods={"POST"})
      */
     public function consulterProfil(Request $request, ParticipantRepository $participantRepository)
     {
