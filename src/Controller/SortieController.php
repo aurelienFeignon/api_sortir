@@ -45,6 +45,8 @@ class SortieController extends AbstractController
         $sortie= $serializer->deserialize($jsonRecu, Sortie::class, 'json');
         $idOrganisateur= json_decode($jsonRecu)->idOrganisateur;
         $organisateur= $participantRepository->find($idOrganisateur);
+        $etat= $etatRepository->find(1);
+        $sortie->setEtat($etat);
         if(is_null($organisateur)){
             return $this->json(['error'=>"L'organisateur n'existe pas"],400);
         }
@@ -58,14 +60,22 @@ class SortieController extends AbstractController
         if(is_null($ville)){
             return $this->json(['error'=>"La ville n'existe pas"],400);
         }
-        if(isset(json_decode($jsonRecu)->idLieu)) {
+        if(json_decode($jsonRecu)->idLieu !="") {
             $idLieu = json_decode($jsonRecu)->idLieu;
             $lieu = $lieuRepository->find($idLieu);
         }else{
             $nomLieu=json_decode($jsonRecu)->nomLieu;
             $rueLieu=json_decode($jsonRecu)->rueLieu;
+            if(json_decode($jsonRecu)->latitudeLieu ===""){
+                $latitudeLieu=null;
+            }else{
             $latitudeLieu=json_decode($jsonRecu)->latitudeLieu;
+            }
+            if(json_decode($jsonRecu)->longitudeLieu===""){
+                $longitudeLieu=null;
+            }else{
             $longitudeLieu=json_decode($jsonRecu)->longitudeLieu;
+            }
             if(is_null($nomLieu)||is_null($rueLieu)){
                 return $this->json(["error"=>"Les champs de lieux ne sont pas tous saisie"], 400);
             }
@@ -74,8 +84,7 @@ class SortieController extends AbstractController
             $entityManager->persist($lieu);
             $entityManager->flush();
         }
-        $idEtat= json_decode($jsonRecu)->idEtat;
-        $etat = $etatRepository->find($idEtat);
+        $etat = $etatRepository->find(1);
         $sortie->setEtat($etat);
         $sortie->setLieu($lieu);
         $sortie->setCampus($campus);
@@ -171,7 +180,7 @@ class SortieController extends AbstractController
         $em= $this->getDoctrine()->getManager();
         foreach ($sorties as $sortie){
             $now= new \DateTime();
-            if($sortie->getDateHeureDebut()->add(new \DateInterval('PT'.$sortie->getDuree().'M'))>$now){
+            if($sortie->getDateHeureDebut()->add(new \DateInterval('PT'.$sortie->getDuree().'M'))<$now){
             $repo= $this->getDoctrine()->getRepository(Etat::class);
             $etat= $repo->find(2);
             $sortie->setEtat($etat);
