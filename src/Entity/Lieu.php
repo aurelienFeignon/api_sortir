@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Lieu
 {
     /**
-     * @Groups({"ville:read", "sortie:read"})
+     * @Groups({"ville:read", "sortie:read", "lieu:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -23,7 +23,7 @@ class Lieu
     private $id;
 
     /**
-     * @Groups({"ville:read", "sortie:read"})
+     * @Groups({"ville:read", "sortie:read", "lieu:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -37,7 +37,7 @@ class Lieu
     private $nom;
 
     /**
-     * @Groups({"ville:read", "sortie:read"})
+     * @Groups({"ville:read", "sortie:read", "lieu:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="string")
@@ -51,7 +51,7 @@ class Lieu
     private $rue;
 
     /**
-     * @Groups({"ville:read", "sortie:read"})
+     * @Groups({"ville:read", "sortie:read", "lieu:read"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Type(type="float")
@@ -60,7 +60,7 @@ class Lieu
     private $latitude;
 
     /**
-     * @Groups({"ville:read", "sortie:read"})
+     * @Groups({"ville:read", "sortie:read", "lieu:read"})
      * @ORM\Column(type="float", nullable=true)
      */
     private $longitude;
