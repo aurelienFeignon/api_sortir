@@ -169,6 +169,20 @@ class ParticipantController extends AbstractController
         $idParticipant= json_decode($jsonRecu)->idParticipant;
         return $this->json($participantRepository->find($idParticipant),200,[],['groups'=>'participantConsulte:read']);
     }
+
+    /**
+     * @Route("api/participant/email", name="mdpOublié", methods={"POST"})
+     */
+    public function mdpOublie(Request $request, ParticipantRepository $participantRepository)
+    {
+        $jsonRecu=$request->getContent();
+        $emailParticipant= json_decode($jsonRecu)->email;
+        $participant= $participantRepository->findOneBy(['email'=>$emailParticipant]);
+        if(is_null($participant)){
+            return $this->json(['error'=>'email incorect'],400);
+        }
+        return $this->json($participant,200,[],['groups'=>'participantUser:read']);
+    }
 }
 
 
