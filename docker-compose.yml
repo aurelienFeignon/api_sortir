@@ -1,0 +1,13 @@
+version: '3.8 '
+
+services:
+  postgres:
+      image: library/postgres:12.4-alpine
+      restart: on-failure
+      environment:
+        POSTGRES_USER: main
+        POSTGRES_PASSWORD: main
+        POSTGRES_DB: sortir-api
+      ports:
+        - "5432:5432"
+
