@@ -1,3 +1,5 @@
+SET client_encoding = 'UTF8';
+
 INSERT INTO public.campus (id, nom) VALUES (19, 'Nantes');
 INSERT INTO public.campus (id, nom) VALUES (20, 'Niort');
 INSERT INTO public.campus (id, nom) VALUES (21, 'Rennes');
