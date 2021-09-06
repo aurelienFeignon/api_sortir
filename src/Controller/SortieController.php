@@ -45,7 +45,7 @@ class SortieController extends AbstractController
         $sortie= $serializer->deserialize($jsonRecu, Sortie::class, 'json');
         $idOrganisateur= json_decode($jsonRecu)->idOrganisateur;
         $organisateur= $participantRepository->find($idOrganisateur);
-        $etat= $etatRepository->find(1);
+        $etat= $etatRepository->findOneBy(['libelle'=>'Créée']);
         $sortie->setEtat($etat);
         if(is_null($organisateur)){
             return $this->json(['error'=>"L'organisateur n'existe pas"],400);
@@ -84,7 +84,7 @@ class SortieController extends AbstractController
             $entityManager->persist($lieu);
             $entityManager->flush();
         }
-        $etat = $etatRepository->find(1);
+        $etat = $etatRepository->findOneBy(['libelle'=>'Créée']);
         $sortie->setEtat($etat);
         $sortie->setLieu($lieu);
         $sortie->setCampus($campus);
@@ -159,7 +159,7 @@ class SortieController extends AbstractController
             return $this->json(['error'=>"La sortie n'existe pas"], 400);
         }
         $motif= json_decode($jsonRecu)->motif;
-        $etat= $etatRepository->find(2);
+        $etat= $etatRepository->findOneBy(['libelle'=>'Cloturée']);
         $sortie->setEtat($etat);
         $sortie->setMotif($motif);
         $em->flush();
@@ -182,7 +182,7 @@ class SortieController extends AbstractController
             $now= new \DateTime();
             if($sortie->getDateHeureDebut()->add(new \DateInterval('PT'.$sortie->getDuree().'M'))<$now){
             $repo= $this->getDoctrine()->getRepository(Etat::class);
-            $etat= $repo->find(2);
+            $etat= $repo->findOneBy(['libelle'=>'Cloturée']);
             $sortie->setEtat($etat);
             $em->flush();
             }
