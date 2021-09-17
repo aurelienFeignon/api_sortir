@@ -193,7 +193,7 @@ class ParticipantController extends AbstractController
         $apiToken= json_decode($jsonRecu)->apiToken;
         $paticipant =$participantRepository->findOneBy(["apiToken"=>$apiToken]);
         if (!is_null($paticipant)){
-            return $this->json($paticipant,200,[],['groups'=>'participantConsulte:read']);
+            return $this->json($paticipant,200,[],['groups'=>'participantUser:read']);
         }else $this->json(['error'=>'apiToken incorect'],400);
 
     }
