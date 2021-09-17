@@ -183,6 +183,20 @@ class ParticipantController extends AbstractController
         }
         return $this->json($participant,200,[],['groups'=>'participantUser:read']);
     }
+
+    /**
+     * @Route("api/participant/recoverUserWithApiToken", name="consulterProfil", methods={"POST"})
+     */
+    public function recoverProfilWithApiToken(Request $request, ParticipantRepository $participantRepository)
+    {
+        $jsonRecu= $request->getContent();
+        $apiToken= json_decode($jsonRecu)->apiToken;
+        $paticipant =$participantRepository->findOneBy(["apiToken"=>$apiToken]);
+        if (!is_null($paticipant)){
+            return $this->json($paticipant,200,[],['groups'=>'participantConsulte:read']);
+        }else $this->json(['error'=>'apiToken incorect'],400);
+
+    }
 }
 
 
