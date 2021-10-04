@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ParticipantController extends AbstractController
 {
     /**
-     * @Route("/api/register/participant", name="addParticipant", methods={"POST"})
+         * @Route("/api/register/participant", name="addParticipant", methods={"POST"})
      */
     public function addParticipant(Request $request, EntityManagerInterface $em, ValidatorInterface $validator,
                                    SerializerInterface $serializer, UserPasswordEncoderInterface $passwordEncoder,
@@ -30,7 +30,9 @@ class ParticipantController extends AbstractController
         $id_campus=json_decode($jsonRecu)->campus;
         $campus= $campusRepository->find($id_campus);
         $participant->setCampus($campus);
-        $participant= $generateToken->getToken($participant);
+        $participant->setApiToken($generateToken->getToken($participant));
+        $participant->setAdministrateur(false);
+        $participant->setActif(true);
         $error= $validator->validate($participant);
         $emailExistant=$participantRepository->findOneBy(['email'=>$participant->getEmail()]);
         if(!empty($emailExistant)){
