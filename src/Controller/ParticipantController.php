@@ -27,7 +27,8 @@ class ParticipantController extends AbstractController
     {
         $jsonRecu= $request->getContent();
         $participant= $serializer->deserialize($jsonRecu, Participant::class, 'json');
-        $id_campus=json_decode($jsonRecu)->campus;
+        $decodeJson=json_decode($jsonRecu);
+        $id_campus=$decodeJson->campus;
         $campus= $campusRepository->find($id_campus);
         $participant->setCampus($campus);
         $participant->setApiToken($generateToken->getToken($participant));
@@ -48,6 +49,19 @@ class ParticipantController extends AbstractController
             $participant->setPassword($passwordEncoder->encodePassword($participant, $participant->getPassword()));
             if($participant->getAdministrateur()){
                 $participant->addRoles('ROLE_ADMIN');
+            }
+            $imageBase64= $decodeJson->image->base64;
+            if(!empty($imageBase64)){
+                list($type, $imageBase64)= explode(';', $imageBase64);
+                list(, $imageBase64)= explode(',',$imageBase64);
+                list(,$type)= explode('/', $type);
+                $fichier= md5(uniqid()).'.'.$type;
+                $image= base64_decode($imageBase64);
+                if(!is_dir($this->getParameter('images_directory'))){
+                   mkdir($this->getParameter('images_directory'));
+                }
+                file_put_contents($this->getParameter('images_directory').'/'.$fichier,$image);
+                $participant->setCheminImg($fichier);
             }
             $em->persist($participant);
             $em->flush();
