@@ -13,8 +13,6 @@ class ImageController extends AbstractController
      */
     public function index($nom): Response
     {
-        $dp= opendir($this->getParameter('images_directory'));
-
         return $this->render('image/index.html.twig', [
             'nom' => $nom,
         ]);
