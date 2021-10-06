@@ -187,7 +187,8 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("api/participant/email", name="mdpOublié", methods={"POST"})
+     * @Route("api/participant/reset/password/first/step", name="mdpOublié", methods={"POST"})
+     * @throws \Exception
      */
     public function mdpOublie(Request $request, ParticipantRepository $participantRepository)
     {
@@ -197,7 +198,11 @@ class ParticipantController extends AbstractController
         if(is_null($participant)){
             return $this->json(['error'=>'email incorect'],400);
         }
-        return $this->json($participant,200,[],['groups'=>'participantUser:read']);
+        $number='';
+        for($i=0; $i<8; $i++){
+            $number.= random_int(0,9);
+        }
+        return $this->json($number,200);
     }
 
     /**
